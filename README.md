@@ -1,2 +1,2 @@
 # Machine Learning
-This repo contains my practice in Machine 
+This repo contains my practice in  
