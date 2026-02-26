@@ -1,2 +1,2 @@
 # Machine Learning
-this repo contains my work in machine learning
+this repo contains my work in m
