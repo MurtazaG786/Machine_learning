@@ -49,11 +49,13 @@ exports.addGroupExpense = async (req, res) => {
   try {
     const group = await Group.findById(req.params.id);
     if (!group) return res.status(404).json({ message: 'Group not found' });
+    if (!group.members.length) return res.status(400).json({ message: 'Group has no members' });
     const { description, amount, category, splits } = req.body;
+    const memberCount = group.members.length;
     const expense = {
       description, amount, category,
       paidBy: req.user._id, paidByName: req.user.name,
-      splits: splits || (group.members.length > 0 ? group.members.map(m => ({ user: m.user, name: m.name, amount: amount / group.members.length, settled: false })) : [])
+      splits: splits || group.members.map(m => ({ user: m.user, name: m.name, amount: amount / memberCount, settled: false }))
     };
     group.expenses.push(expense);
     await group.save();

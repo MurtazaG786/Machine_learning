@@ -124,8 +124,13 @@ exports.uploadReceipt = async (req, res) => {
       if (keywords.some(kw => lowerText.includes(kw))) { category = cat; break; }
     }
 
-    res.json({ success: true, text, amount, category, imagePath: req.file.filename });
+    res.json({ success: true, amount, category, imagePath: req.file.filename });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  } finally {
+    // Clean up uploaded file after OCR processing to prevent disk accumulation
+    if (req.file?.path) {
+      try { fs.unlinkSync(req.file.path); } catch { /* ignore cleanup errors */ }
+    }
   }
 };

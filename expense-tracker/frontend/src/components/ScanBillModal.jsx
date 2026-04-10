@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { MdClose, MdCloudUpload, MdCamera, MdCheck } from 'react-icons/md'
 import api from '../api/axios'
 import toast from 'react-hot-toast'
@@ -17,7 +17,21 @@ export default function ScanBillModal({ onClose, onAddExpense }) {
   const [cameraOpen, setCameraOpen] = useState(false)
   const [stream, setStream] = useState(null)
 
+  // Stop camera stream and revoke blob URLs on unmount
+  useEffect(() => {
+    return () => {
+      stream?.getTracks().forEach(t => t.stop())
+    }
+  }, [stream])
+
+  useEffect(() => {
+    return () => {
+      if (preview) URL.revokeObjectURL(preview)
+    }
+  }, [preview])
+
   const handleFile = (f) => {
+    if (preview) URL.revokeObjectURL(preview)
     setFile(f)
     setPreview(URL.createObjectURL(f))
   }
