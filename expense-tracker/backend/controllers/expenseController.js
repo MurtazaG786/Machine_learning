@@ -2,6 +2,8 @@ const Expense = require('../models/Expense');
 const path = require('path');
 const fs = require('fs');
 
+const VALID_CATEGORIES = ['Food', 'Transport', 'Shopping', 'Entertainment', 'Health', 'Bills', 'Education', 'Travel', 'Other'];
+
 exports.getExpenses = async (req, res) => {
   try {
     const { startDate, endDate, category } = req.query;
@@ -11,7 +13,8 @@ exports.getExpenses = async (req, res) => {
       if (startDate) query.date.$gte = new Date(startDate);
       if (endDate) query.date.$lte = new Date(endDate);
     }
-    if (category) query.category = category;
+    // Only allow known category values to prevent query operator injection
+    if (category && VALID_CATEGORIES.includes(category)) query.category = category;
     const expenses = await Expense.find(query).sort({ date: -1 }).limit(50);
     res.json(expenses);
   } catch (error) {
@@ -41,7 +44,14 @@ exports.createExpense = async (req, res) => {
 
 exports.updateExpense = async (req, res) => {
   try {
-    const expense = await Expense.findOneAndUpdate({ _id: req.params.id, user: req.user._id }, req.body, { new: true });
+    const { amount, category, description, date, paymentMethod } = req.body;
+    const update = {};
+    if (amount !== undefined) update.amount = amount;
+    if (category && VALID_CATEGORIES.includes(category)) update.category = category;
+    if (description) update.description = description;
+    if (date) update.date = date;
+    if (paymentMethod) update.paymentMethod = paymentMethod;
+    const expense = await Expense.findOneAndUpdate({ _id: req.params.id, user: req.user._id }, update, { new: true });
     if (!expense) return res.status(404).json({ message: 'Expense not found' });
     res.json(expense);
   } catch (error) {

@@ -4,9 +4,18 @@ const jwt = require('jsonwebtoken');
 
 const generateToken = (id) => jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '30d' });
 
+// Sanitize string input to prevent NoSQL injection via operator objects
+const sanitizeString = (val) => (typeof val === 'string' ? val : '');
+
 exports.register = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const name = sanitizeString(req.body.name);
+    const email = sanitizeString(req.body.email).toLowerCase().trim();
+    const password = sanitizeString(req.body.password);
+
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: 'All fields are required' });
+    }
     const userExists = await User.findOne({ email });
     if (userExists) return res.status(400).json({ message: 'User already exists' });
     const salt = await bcrypt.genSalt(10);
@@ -20,7 +29,12 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const email = sanitizeString(req.body.email).toLowerCase().trim();
+    const password = sanitizeString(req.body.password);
+
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email and password are required' });
+    }
     const user = await User.findOne({ email });
     if (user && (await bcrypt.compare(password, user.password))) {
       res.json({ _id: user._id, name: user.name, email: user.email, currency: user.currency, monthlyBudget: user.monthlyBudget, token: generateToken(user._id) });

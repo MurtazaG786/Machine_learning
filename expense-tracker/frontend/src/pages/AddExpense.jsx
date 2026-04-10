@@ -43,7 +43,12 @@ export default function AddExpense() {
 
   const handleReceiptChange = (e) => {
     const f = e.target.files[0]
-    if (f) { setReceipt(f); setReceiptPreview(URL.createObjectURL(f)) }
+    if (f && f.type.startsWith('image/')) {
+      setReceipt(f)
+      // createObjectURL returns a safe blob: URL for local preview only
+      const blobUrl = URL.createObjectURL(f)
+      if (blobUrl.startsWith('blob:')) setReceiptPreview(blobUrl)
+    }
   }
 
   return (
