@@ -53,7 +53,7 @@ exports.addGroupExpense = async (req, res) => {
     const expense = {
       description, amount, category,
       paidBy: req.user._id, paidByName: req.user.name,
-      splits: splits || group.members.map(m => ({ user: m.user, name: m.name, amount: amount / group.members.length, settled: false }))
+      splits: splits || (group.members.length > 0 ? group.members.map(m => ({ user: m.user, name: m.name, amount: amount / group.members.length, settled: false })) : [])
     };
     group.expenses.push(expense);
     await group.save();

@@ -8,7 +8,7 @@ const categories = ['Food', 'Transport', 'Shopping', 'Entertainment', 'Health', 
 
 export default function Groups() {
   const { user } = useAuth()
-  const currency = user?.currency === 'USD' ? '$' : '$'
+  const currency = user?.currency === 'USD' ? '$' : user?.currency === 'INR' ? '₹' : user?.currency === 'EUR' ? '€' : '$'
   const [groups, setGroups] = useState([])
   const [loading, setLoading] = useState(true)
   const [createModal, setCreateModal] = useState(false)

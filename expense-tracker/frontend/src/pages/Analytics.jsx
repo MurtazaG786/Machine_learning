@@ -5,12 +5,12 @@ import { useAuth } from '../context/AuthContext'
 
 const COLORS = ['#8b5cf6', '#06b6d4', '#f59e0b', '#ef4444', '#10b981', '#f97316', '#3b82f6', '#ec4899', '#6b7280']
 
-const CustomTooltip = ({ active, payload, label }) => {
+const CustomTooltip = ({ active, payload, label, currency = '$' }) => {
   if (active && payload && payload.length) {
     return (
       <div className="glass p-3 text-sm">
         <p className="text-white/60 mb-1">{label}</p>
-        {payload.map((p, i) => <p key={i} className="text-white font-bold">${p.value?.toFixed(2)}</p>)}
+        {payload.map((p, i) => <p key={i} className="text-white font-bold">{currency}{p.value?.toFixed(2)}</p>)}
       </div>
     )
   }
@@ -74,7 +74,7 @@ export default function Analytics() {
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
             <XAxis dataKey="month" tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }} axisLine={false} tickLine={false} />
             <YAxis tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }} axisLine={false} tickLine={false} />
-            <Tooltip content={<CustomTooltip />} />
+            <Tooltip content={<CustomTooltip currency={currency} />} />
             <Bar dataKey="total" fill="url(#purpleGrad)" radius={[6, 6, 0, 0]} />
             <defs>
               <linearGradient id="purpleGrad" x1="0" y1="0" x2="0" y2="1">
@@ -130,7 +130,7 @@ export default function Analytics() {
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
               <XAxis dataKey="day" tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }} axisLine={false} tickLine={false} />
-              <Tooltip content={<CustomTooltip />} />
+              <Tooltip content={<CustomTooltip currency={currency} />} />
               <Line type="monotone" dataKey="total" stroke="#06b6d4" strokeWidth={2.5} dot={{ fill: '#06b6d4', r: 4 }} activeDot={{ r: 6 }} />
             </LineChart>
           </ResponsiveContainer>
