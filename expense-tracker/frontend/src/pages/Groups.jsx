@@ -6,9 +6,11 @@ import { MdAdd, MdGroup, MdClose, MdPerson, MdAttachMoney } from 'react-icons/md
 
 const categories = ['Food', 'Transport', 'Shopping', 'Entertainment', 'Health', 'Bills', 'Education', 'Travel', 'Other']
 
+import { getCurrencySymbol } from '../utils/currency'
+
 export default function Groups() {
   const { user } = useAuth()
-  const currency = user?.currency === 'USD' ? '$' : user?.currency === 'INR' ? '₹' : user?.currency === 'EUR' ? '€' : '$'
+  const currency = getCurrencySymbol(user?.currency)
   const [groups, setGroups] = useState([])
   const [loading, setLoading] = useState(true)
   const [createModal, setCreateModal] = useState(false)

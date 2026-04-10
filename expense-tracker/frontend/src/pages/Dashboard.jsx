@@ -6,6 +6,7 @@ import StatCard from '../components/StatCard'
 import ExpenseCard from '../components/ExpenseCard'
 import ScanBillModal from '../components/ScanBillModal'
 import toast from 'react-hot-toast'
+import { getCurrencySymbol } from '../utils/currency'
 
 export default function Dashboard() {
   const { user } = useAuth()
@@ -16,7 +17,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true)
   const [quickForm, setQuickForm] = useState({ amount: '', category: 'Food', description: '' })
 
-  const currency = user?.currency === 'USD' ? '$' : user?.currency === 'INR' ? '₹' : user?.currency === 'EUR' ? '€' : '$'
+  const currency = getCurrencySymbol(user?.currency)
 
   const fetchData = useCallback(async () => {
     try {

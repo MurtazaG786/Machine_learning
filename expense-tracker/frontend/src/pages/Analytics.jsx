@@ -17,9 +17,11 @@ const CustomTooltip = ({ active, payload, label, currency = '$' }) => {
   return null
 }
 
+import { getCurrencySymbol } from '../utils/currency'
+
 export default function Analytics() {
   const { user } = useAuth()
-  const currency = user?.currency === 'USD' ? '$' : user?.currency === 'INR' ? '₹' : '$'
+  const currency = getCurrencySymbol(user?.currency)
   const [monthly, setMonthly] = useState([])
   const [categories, setCategories] = useState([])
   const [weekly, setWeekly] = useState([])
